@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext, CustomCard as Card } from './context';
+import { createAccount } from './api';
 
 const CreateAccount = () => {
   const [show, setShow]     = React.useState(true);
@@ -33,13 +34,17 @@ function CreateForm(props){
 
   function handle(){
     console.log(name,email,password);
-    const url = `/account/create/${name}/${email}/${password}`;
-    (async () => {
-        var res  = await fetch(url);
-        if (res.status !== 200) {
-          throw Error("Failed to create new account");
+
+    createAccount(name, email, password)
+      .then(res => {
+        if (res.status == 200) {
+          console.log("account created successfully!", res)
         }
-    })();
+      })
+      .catch(err => {
+        console.log("failed to create account", err)
+      });
+
     props.setShow(false);
   }    
 

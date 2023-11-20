@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext, CustomCard as Card } from './context';
+import { deposit } from './api';
 
 
 const Deposit = () => {
@@ -37,36 +38,47 @@ function DepositForm(props){
   const [amount, setAmount] = React.useState('');
 
   function handle(){
-
-    // firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-    //   // Send token to your backend via HTTPS
-
-    //   fetch(`/account/update/${email}/${amount}`, { 
-    //     method: 'post', 
-    //     headers: new Headers({
-    //         'Authorization': 'token '+idToken, 
-    //         'Content-Type': 'application/x-www-form-urlencoded'
-    //     })
-    //   })
-    //   .then(response => response.text())
-    //   .then(text => {
-    //       try {
-    //           const data = JSON.parse(text);
-    //           props.setStatus(`Balance: $ ${data.value["balance"]}`);
-    //           props.setShow(false);
-    //           console.log('JSON:', data);
-    //       } catch(err) {
-    //           props.setStatus('Deposit failed')
-    //           console.log('err:', text);
-    //       }
-    //   });
-
-    // }).catch(function(error) {
-    //   // Handle error
-    // });
+    deposit(email, amount)
+    // .then(response => response.json())
+    .then(response => {
+        try {
+          // console.log(`the response is`, response);
+          // console.log(`the response is`, response.json);
+          // console.log(`the response is`, response.data);
+          // const data = JSON.parse(response.data);
+          // console.log(`the response is`, data);
+          // props.setStatus(`Balance: $ ${data.value["balance"]}`);
+          props.setStatus('Deposit Success; goto Balance tab to see balance.')
+          props.setShow(false);
+          // console.log('JSON:', data);
+        } catch(err) {
+          props.setStatus('Deposit failed')
+          console.log('err:', err);
+          console.log('response:', response);
+        }
+    })
+    .catch(err => {
+      console.log("failed to deposit", err)
+      props.setStatus('Deposit failed.')
+    });
+    props.setShow(false);
     
 
+    
 
+    // fetch(`/account/update/${email}/${amount}`)
+    // .then(response => response.text())
+    // .then(text => {
+    //     try {
+    //         const data = JSON.parse(text);
+    //         props.setStatus(`Balance: $ ${data.value["balance"]}`);
+    //         props.setShow(false);
+    //         console.log('JSON:', data);
+    //     } catch(err) {
+    //         props.setStatus('Deposit failed')
+    //         console.log('err:', text);
+    //     }
+    // });
   }
 
   return(<>

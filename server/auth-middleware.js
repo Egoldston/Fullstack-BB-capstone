@@ -2,7 +2,7 @@
 /*
     auth-middleware.js
 */
-var firebaseAdmin = require('firebase-admin/app');
+var firebaseAdmin = require('firebase-admin');
 
 function authMiddleware(request, response, next) {
   const headerToken = request.headers.authorization;

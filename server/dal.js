@@ -42,24 +42,37 @@ connectToDB();
 
 // create user account
 function create(name, email, password){
+
+    console.log("inside create DAL service");
+
     return new Promise((resolve, reject) => {    
         const collection = db.collection('users');
         const doc = {name, email, password, balance: 0};
-        collection.insertOne(doc, {w:1}, function(err, result) {
-            err ? reject(err) : resolve(doc);
-        });    
+        // collection.insertOne(doc, {w:1}, function(err, result) {
+        //     err ? reject(err) : resolve(doc);
+        // });
+
+        collection.insertOne(doc)
+        .then((doc) => resolve(doc))
+        .catch((err) => reject(err)); 
+
     })
 }
 
 // find user account
 function find(email){
     return new Promise((resolve, reject) => {    
-        const customers = db
+        // const users = db
+        //     .collection('users')
+        //     .find({email: email})
+        //     .toArray(function(err, docs) {
+        //         err ? reject(err) : resolve(docs);
+        //     });
+        const users = db
             .collection('users')
             .find({email: email})
-            .toArray(function(err, docs) {
-                err ? reject(err) : resolve(docs);
-        });    
+            .then((doc) => resolve(doc))
+            .catch((err) => reject(err)); 
     })
 }
 
@@ -76,19 +89,19 @@ function findOne(email){
 
 // update - deposit/withdraw amount
 function update(email, amount){
-    return new Promise((resolve, reject) => {    
+    return new Promise((resolve, reject) => { 
         const customers = db
-            .collection('users')            
+            .collection('users')
             .findOneAndUpdate(
-                {email: email},
-                { $inc: { balance: amount}},
+                { email: email },
+                { $inc: { balance: amount }},
                 { returnOriginal: false },
                 function (err, documents) {
                     err ? reject(err) : resolve(documents);
                 }
-            );            
-
-
+            )
+            .then((doc) => resolve(doc))
+            .catch((err) => reject(err)); 
     });    
 }
 
