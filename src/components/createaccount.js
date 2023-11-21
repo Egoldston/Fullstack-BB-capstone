@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { UserContext, CustomCard as Card } from './context';
+import React from 'react';
+import { CustomCard as Card } from './context';
 import { createAccount } from './api';
 
 const CreateAccount = () => {

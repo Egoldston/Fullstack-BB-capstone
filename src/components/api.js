@@ -29,25 +29,15 @@ export const login = (email, password) => {
 };
 
 export const deposit = (email, amount) => {
-  return api.get(`/account/update/${email}/${amount}`, {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-    withCredentials: true,
-    mode: 'no-cors',
-  });
+  return api.get(`/account/update/${email}/${amount}`);
 };
 
 export const withdraw = (email, amount) => {
-  return api.get(`/account/update/${email}/-${amount}`, {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-    withCredentials: true,
-    mode: 'no-cors',
-  });
+  return api.get(`/account/update/${email}/-${amount}`);
 };
 
-export const getBalance = (email) => {
-  return api.get(`/account/balance/${email}`);
+export const getBalance = async (email) => {
+  return await api.get(`/account/balance/${email}`);
 };
 
 

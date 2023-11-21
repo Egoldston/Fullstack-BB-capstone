@@ -114,11 +114,11 @@ app.get('/account/find/:email', function (req, res) {
         then((user) => {
             console.log(user);
             res.send(user)
+        })
         .catch(err => {
             console.log(err);
             res.status(500).send(err);
         });
-    });
 });
 
 
@@ -127,12 +127,12 @@ app.get('/account/findOne/:email', function (req, res) {
     dal.findOne(req.params.email).
         then((user) => {
             console.log(user);
-            res.send(user)
+            res.send(user);
+        })
         .catch(err => {
             console.log(err);
             res.status(500).send(err);
         });
-    });
 });
 
 
@@ -162,12 +162,12 @@ app.get('/account/balance/:email/', function (req, res) {
     dal.findOne(req.params.email).
         then((user) => {
             console.log(user);
-            res.send(user)
+            res.send(user);
+        })
         .catch(err => {
             console.log(err);
             res.status(500).send(err);
         });
-    });
 });
 
 
@@ -178,12 +178,12 @@ app.get('/account/all', function (req, res) {
     dal.all()
         .then((docs) => {
             console.log(docs);
-            res.send(docs)
+            res.send(docs);
+        })
         .catch(err => {
             console.log(err);
             res.status(500).send(err);
         });
-    });
 });
 
 

@@ -1,9 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { useHistory } from "react-router-dom";
-import { auth, firebase } from "./firebase";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { UserContext, CustomCard as Card } from './context';
-import { login } from './api';
+import React from 'react';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+
+import { auth } from "./firebase";
+import { CustomCard as Card } from './context';
 
 
 const Login = () => {
@@ -18,7 +17,10 @@ const Login = () => {
       status={status}
       body={
         show ? (
-          <LoginForm setShow={setShow} setStatus={setStatus} />
+          <div>
+            <LoginForm setShow={setShow} setStatus={setStatus}></LoginForm>
+            <LoginFormGoogle setShow={setShow} setStatus={setStatus}></LoginFormGoogle>
+          </div>
         ) : (
           <LoginMsg setShow={setShow} setStatus={setStatus} user={user} />
         )
@@ -42,49 +44,30 @@ function LoginMsg(props) {
     </>
   );
 }
+
 function LoginForm(props) {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
   
     function handle() {
-
-      login(email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .then(response => {
-          try {
-            console.log('response:', response);
-            const stringified = JSON.stringify(response);
-            console.log('stringified:', stringified);
-            const json = JSON.parse(stringified);
-            console.log('json:', json);
+          
+          console.log('response from signin with email', response);
 
-
-            localStorage.setItem("token", json.data);
-            // localStorage.setItem('user')
-
-            // const data = JSON.parse(text);
-            // // Assuming the server response includes user data like id, name, etc.
-            // // Store user data in localStorage
-            // localStorage.setItem('user', JSON.stringify(data));
-            // console.log('Balance:', data.balance);
-            // console.log('User:', data.name);
-            // props.setStatus('');
-            // props.setShow(false);
-            // props.setUser(data); 
-            // console.log('JSON:', data);
-
-            
-          props.setStatus(null);
-          props.setShow(false);
-          } catch(err) {
-            props.setStatus(response);
-            console.log('err:', response);
+          if (auth && auth.currentUser) {
+            auth.currentUser.getIdToken().then(function(idToken) {
+              localStorage.setItem("token", idToken);
+            }).catch(function(error) {
+              console.log(error)
+            });
+          } else {
+            console.log('could not find current user');
           }
         })
-        .catch(err => {
-          props.setStatus("failed to login; wrong username or password");
-          console.log("failed to login; wrong username or password", err)
-        });
-
+        .catch((error) =>
+          console.log(error)
+        );
     }
   
     return (
@@ -108,40 +91,7 @@ function LoginForm(props) {
     );
 }
 
-
-function LoginFormGoogle1(props) {
-  // const history = useHistory();
-  async function googleLogin() {
-    //1 - init Google Auth Provider
-    const provider = new GoogleAuthProvider();
-    //2 - create the popup signIn
-    await auth.signInWithPopup(provider).then(
-      async (result) => {
-        //3 - pick the result and store the token
-        const token = await auth?.currentUser?.getIdToken(true);
-        //4 - check if have token in the current user
-        if (token) {
-          //5 - put the token at localStorage (We'll use this to make requests)
-          localStorage.setItem("@token", token);
-          //6 - navigate user to the book list
-          // history.push("/deposit");
-        }
-      },
-      function (error) {
-        console.log(error);
-      }
-    );
-  }
-  return (
-    <div>
-      <button onClick={googleLogin} className="login-button">
-        GOOGLE
-      </button>
-    </div>
-  );
-}
-
-function LoginFormGoogle2(props) {
+function LoginFormGoogle(props) {
   // const history = useHistory();
   async function googleLogin() {
     //1 - init Google Auth Provider
@@ -153,11 +103,11 @@ function LoginFormGoogle2(props) {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-        localStorage.setItem("@token", token);
+        localStorage.setItem("token", token);
 
         // The signed-in user info.
         const user = result.user;
-        localStorage.setItem("@user", user);
+        localStorage.setItem("user", user);
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       }).catch((error) => {
@@ -173,58 +123,11 @@ function LoginFormGoogle2(props) {
   }
   return (
     <div>
-      <button onClick={googleLogin} className="login-button">
+      <button onClick={googleLogin} className="btn btn-light">
         GOOGLE
       </button>
     </div>
   );
 }
 
-
-
 export default Login;
-  
-
-
-
-
-
-
-
-
-// import React, { Component } from 'react';
-// import firebaseApp from './firebase';
-
-// export default class Login extends Component {
-
-//   componentDidMount() {
-//     firebaseApp.auth().onAuthStateChanged(user => {
-//       if (user) {
-//         console.log(user);
-//       }
-//     });
-//   }
-
-//   authenticate() {
-//     var provider = new firebaseApp.auth.GoogleAuthProvider();
-//     provider.addScope('profile');
-//     provider.addScope('email');
-
-//     firebaseApp.auth().signInWithPopup(provider)
-//       .then(result => {
-//         console.log(result);
-//       })
-//   }
-
-//   render() {
-//     return (
-//       <div>
-//         <h1>Login Page</h1>
-//         <button onClick={this.authenticate.bind(this)}>
-//           Login with Google
-//         </button>
-//       </div>
-
-//     );
-//   }
-// }

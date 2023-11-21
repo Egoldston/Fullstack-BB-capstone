@@ -1,6 +1,7 @@
-import React, { useState, useContext } from 'react';
-import { UserContext, CustomCard as Card } from './context';
+import React from 'react';
+import { CustomCard as Card } from './context';
 import { deposit } from './api';
+import { FirebaseAuthProvider, useFirebaseAuth } from "./firebase-auth-context";
 
 
 const Deposit = () => {
@@ -12,83 +13,51 @@ const Deposit = () => {
       bgcolor="warning"
       header="Deposit"
       status={status}
-      body={show ? 
-        <DepositForm setShow={setShow} setStatus={setStatus}/> :
-        <DepositMsg setShow={setShow} setStatus={setStatus}/>}
+      body={
+        <FirebaseAuthProvider>
+          <h5>
+          <DepositForm setShow={setShow} setStatus={setStatus} />
+          </h5>
+        </FirebaseAuthProvider>
+      }
     />
   )
 }
 
-function DepositMsg(props){
-  return (<>
-    <h5>Success</h5>
-    <button type="submit" 
-      className="btn btn-light" 
-      onClick={() => {
-          props.setShow(true);
-          props.setStatus('');
-      }}>
-        Deposit again
-    </button>
-  </>);
-} 
 
 function DepositForm(props){
-  const [email, setEmail]   = React.useState('');
   const [amount, setAmount] = React.useState('');
 
+  const user = useFirebaseAuth();
+
   function handle(){
-    deposit(email, amount)
-    // .then(response => response.json())
-    .then(response => {
-        try {
-          // console.log(`the response is`, response);
-          // console.log(`the response is`, response.json);
-          // console.log(`the response is`, response.data);
-          // const data = JSON.parse(response.data);
-          // console.log(`the response is`, data);
-          // props.setStatus(`Balance: $ ${data.value["balance"]}`);
-          props.setStatus('Deposit Success; goto Balance tab to see balance.')
-          props.setShow(false);
-          // console.log('JSON:', data);
-        } catch(err) {
-          props.setStatus('Deposit failed')
-          console.log('err:', err);
-          console.log('response:', response);
-        }
-    })
-    .catch(err => {
-      console.log("failed to deposit", err)
-      props.setStatus('Deposit failed.')
-    });
-    props.setShow(false);
-    
+    if (!!user?.email || !!amount) {
+      console.log(`must provide value for email[${user?.email}] and amount[${amount}]`);
+    }
 
-    
-
-    // fetch(`/account/update/${email}/${amount}`)
-    // .then(response => response.text())
-    // .then(text => {
-    //     try {
-    //         const data = JSON.parse(text);
-    //         props.setStatus(`Balance: $ ${data.value["balance"]}`);
-    //         props.setShow(false);
-    //         console.log('JSON:', data);
-    //     } catch(err) {
-    //         props.setStatus('Deposit failed')
-    //         console.log('err:', text);
-    //     }
-    // });
+    deposit(user?.email, amount)
+      .then(response => {
+          try {
+            console.log('response:', response);
+            const stringified = JSON.stringify(response);
+            const json = JSON.parse(stringified);
+            console.log('json:', json);
+            props.setStatus(`You new balance is ${json.data.balance} dollars`);
+            props.setShow(false);
+          } catch(err) {
+            props.setStatus('Deposit failed')
+            console.log('err:', err);
+            console.log('response:', response);
+          }
+      })
+      .catch(err => {
+        console.log("failed to deposit", err)
+        props.setStatus('Deposit failed.')
+      });
   }
 
   return(<>
 
-    Email<br/>
-    <input type="input" 
-      className="form-control" 
-      placeholder="Enter email" 
-      value={email} onChange={e => setEmail(e.currentTarget.value)}/><br/>
-      
     Amount<br/>
     <input type="number" 
       className="form-control" 
