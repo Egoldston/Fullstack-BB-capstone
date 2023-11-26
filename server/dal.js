@@ -95,7 +95,8 @@ function update(email, amount){
             .findOneAndUpdate(
                 { email: email },
                 { $inc: { balance: amount }},
-                { returnOriginal: false },
+                { returnDocument: "after" },
+                // { upsert: true },
                 function (err, documents) {
                     err ? reject(err) : resolve(documents);
                 }

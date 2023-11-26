@@ -58,6 +58,7 @@ function LoginForm(props) {
           if (auth && auth.currentUser) {
             auth.currentUser.getIdToken().then(function(idToken) {
               localStorage.setItem("token", idToken);
+              props.setStatus(`Logged in`);
             }).catch(function(error) {
               console.log(error)
             });

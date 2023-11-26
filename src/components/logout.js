@@ -27,7 +27,7 @@ function LogoutForm(props) {
         auth.signOut();
 
         localStorage.removeItem("token");
-        
+        props.setStatus(`Logged out!`);
         window.href = "/";
     }
   

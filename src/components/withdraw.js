@@ -42,7 +42,7 @@ function WithdrawForm(props){
           const stringified = JSON.stringify(response);
           const json = JSON.parse(stringified);
           console.log('json:', json);
-          props.setStatus(`You new balance is ${json.data.balance} dollars`);
+          props.setStatus(`Your new balance is ${json.data.balance} dollars`);
           props.setShow(false);
         } catch(err) {
           props.setStatus('Withdraw failed')

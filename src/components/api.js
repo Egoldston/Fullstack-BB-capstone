@@ -19,7 +19,7 @@ api.interceptors.request.use(
 );
 
 
-// API endpoints
+// Restful API endpoints
 export const createAccount = (name, email, password) => {
   return api.get(`/account/create/${name}/${email}/${password}`);
 };
