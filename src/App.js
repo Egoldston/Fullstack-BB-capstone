@@ -2,7 +2,8 @@ import './App.css';
 
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
 
 import { UserContext } from './components/context';
 import NavBar from './components/navbar';
@@ -22,17 +23,20 @@ function App() {
         <NavBar/>
         <UserContext.Provider value={null}>
           <div className="container" style={{padding: "20px"}}>
-            <Route path="/" exact component={Home} />
-            <Route path="/CreateAccount/" component={CreateAccount} />
-            <Route path="/signup/" component={SignUp} />
-            <Route path="/login/" component={Login} />
-            <Route path="/logout/" component={Logout} />
-            <Route path="/deposit/" component={Deposit} />
-            <Route path="/withdraw/" component={Withdraw} />
-            <Route path="/balance/" component={Balance} />
+            <Routes>
+              <Route path="/" exact element={<Home />}></Route>
+              <Route path="/CreateAccount/" element={<CreateAccount />}></Route>
+              <Route path="/signup/" element={<SignUp />}></Route>
+              <Route path="/login/" element={<Login />}></Route>
+              <Route path="/logout/" element={<Logout />}></Route>
+              <Route path="/deposit/" element={<Deposit />}></Route>
+              <Route path="/withdraw/" element={<Withdraw />}></Route>
+              <Route path="/balance/" element={<Balance />}></Route>
+            </Routes>
           </div>
         </UserContext.Provider>
       </div>
+      <Outlet />
     </HashRouter>
   );
 }
