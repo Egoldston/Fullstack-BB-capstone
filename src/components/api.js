@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/', // our API base URL
+  baseURL: 'https://capstone-backend-bb-b3cd06c35b25.herokuapp.com', // our API base URL
 });
 
 // Request interceptor for adding the bearer token
